@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import json
 
@@ -11,7 +12,8 @@ from utils.userbase import Userbase
 # Server class
 class ChatServer:
 
-    def __init__(self, port=10000):
+    def __init__(self, host="localhost", port=10000):
+        self.host = host
         self.port = port
         self.llm = LLM()
         self.userbase = Userbase()
@@ -99,13 +101,20 @@ class ChatServer:
                 break
 
     async def start(self):
-        server = await asyncio.start_server(self.handle_client, "localhost", self.port)
+        server = await asyncio.start_server(self.handle_client, self.host, self.port)
         print(f"Server started on port {self.port}")
         async with server:
             await server.serve_forever()
         print(f"Server closed.")
 
 
-# Create and start the server
-server = ChatServer()
-asyncio.run(server.start())
+if __name__ == "__main__":
+    # Argument parsing
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", default="localhost")
+    parser.add_argument("-p", "--port", type=int, default=10000)
+    args = parser.parse_args()
+
+    # Create and start the server
+    server = ChatServer(args.host, args.port)
+    asyncio.run(server.start())

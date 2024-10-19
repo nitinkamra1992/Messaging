@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import json
 import getpass
@@ -89,6 +90,13 @@ class ChatClient:
         self.username = None
 
 
-# Create a client and send a message
-client = ChatClient()
-asyncio.run(client.start())
+if __name__ == "__main__":
+    # Argument parsing
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", default="localhost")
+    parser.add_argument("-p", "--port", type=int, default=9999)
+    args = parser.parse_args()
+
+    # Create a client
+    client = ChatClient(args.host, args.port)
+    asyncio.run(client.start())
