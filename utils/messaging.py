@@ -1,3 +1,10 @@
+import datetime
+
+
+# Server constants
+SERVER_NAME = "__server__"
+
+
 # Message types
 MSG_TYPES = set([
     "client_register_request",
