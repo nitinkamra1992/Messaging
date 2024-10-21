@@ -17,12 +17,16 @@ class LLM:
     async def query(self, instruction, sys_prompt="", **kwargs):
         """Query the LLM with a system prompt and user instructions"""
         # Prompt the LLM
-        response = self.client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": sys_prompt},
-                {"role": "user", "content": instruction}
-            ]
-        ).choices[0].message.content
+        response = (
+            self.client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": sys_prompt},
+                    {"role": "user", "content": instruction},
+                ],
+            )
+            .choices[0]
+            .message.content
+        )
 
         return response
