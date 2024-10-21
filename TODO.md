@@ -1,18 +1,9 @@
 # Messaging TODOs
 
-## [Done] User accounts
-
-1. [Done] Need persistent usernames/Ids and passwords.
-2. [Done] Need a user registration and login system.
-3. [Done] Need a messaging format which identifies user ID to enable chat history.
-
-## [Done] Build timestamps into chat
-
 ## Separate send/receive threads
 
-1. [Done] Factor out generic message send/receive functions
-2. Have these working in separate threads for all clients as well as for the server
-3. Accomodate arbitrary length send/receive
+1. Have separate send/receive threads/processes for clients and server
+2. Accomodate arbitrary length receive_message
 
 ## Build unique message IDs: local (per user) and global (for server)
 
