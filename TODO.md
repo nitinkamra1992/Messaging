@@ -8,6 +8,8 @@
 
 # Build timestamps into chat
 
+# Build unique message IDs: local (per user) and global (for server)
+
 # Support chat histories for all conversations
 
 # [P2] End-to-end encrypted messages
