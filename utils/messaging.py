@@ -2,6 +2,7 @@ import datetime
 import pickle
 from typing import Optional
 
+
 # Server constants
 SERVER_NAME = "__server__"
 SERVER_DISPLAY_NAME = "Server"
@@ -19,9 +20,9 @@ async def send_message(msg, writer):
 
 
 async def receive_message(reader, max_len: int = 4096):
-    response = await reader.read(max_len)
-    if response:
-        return pickle.loads(response)
+    msg = await reader.read(max_len)
+    if msg:
+        return pickle.loads(msg)
     else:
         raise ValueError("None message received likely due to a disconnect.")
 
