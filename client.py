@@ -49,25 +49,26 @@ class ChatClient:
         # Register/login
         while not self.username:
             intent = input("Enter 0 to register or any other key to login: ")
-            if intent == "0":
-                await self.authenticate_user(register=True)
-            else:
-                await self.authenticate_user(register=False)
+            register = (intent == "0")
+            try:
+                await self.authenticate_user(register=register)
+            except:
+                print(f"{SERVER_DISPLAY_NAME} disconnected!")
+                self.username = None
 
         # Chat loop
-        while True:
-            # Send message
+        while self.username is not None:
             content = input(f"{self.username}: ")
             msg = UserServerMessage(self.username, SERVER_NAME, content)
-            await send_message(msg, self.writer)
-
-            # Receive response
             try:
+                # Send message
+                await send_message(msg, self.writer)
+                # Receive response
                 response = await receive_message(self.reader)
                 print(f"{SERVER_DISPLAY_NAME}: {response.content}")
-            except ValueError:
+            except:
                 print(f"{SERVER_DISPLAY_NAME} disconnected!")
-                break
+                self.username = None
 
         # Close connection
         self.writer.close()

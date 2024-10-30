@@ -1,5 +1,6 @@
 import datetime
 import pickle
+import struct
 from typing import Optional
 
 
@@ -12,15 +13,25 @@ SERVER_DISPLAY_NAME = "Server"
 STATUS_CODES = {-1: "N/A", 0: "SUCCESS", 1: "FAILURE"}
 
 
-# Message send and receive functions
 async def send_message(msg, writer):
+    # Serialize the message
     msg = pickle.dumps(msg)
-    writer.write(msg)
+    
+    # Create a header with the length of the message
+    header = struct.pack('!I', len(msg))
+    
+    # Write the header followed by the message
+    writer.write(header + msg)
     await writer.drain()
 
 
-async def receive_message(reader, max_len: int = 4096):
-    msg = await reader.read(max_len)
+async def receive_message(reader):
+    # Read the fixed-size header (4 bytes for int)
+    header = await reader.readexactly(4)
+    msg_len = struct.unpack('!I', header)[0]
+    
+    # Read the full message based on length from header
+    msg = await reader.readexactly(msg_len)
     if msg:
         return pickle.loads(msg)
     else:
