@@ -1,12 +1,10 @@
 # Messaging TODOs
 
-## [Done] Accomodate arbitrary length receive_message
+## Build server logs for all messages
 
 ## Make separate send/receive processes for client as well as server
 
 - For server, might also need send and receive queues associated with each process
-
-## Build server logs for all messages
 
 ## Build unique message IDs: local (per user) and global (for server)
 
@@ -27,5 +25,9 @@
 ## Add a flask UI for client
 
 ## Support chat histories for all conversations
+
+## Add tools
+
+- Search a conversation with a keyword
 
 ## [P2] End-to-end encrypted messages
