@@ -1,6 +1,6 @@
 # Messaging TODOs
 
-## Accomodate arbitrary length receive_message
+## [Done] Accomodate arbitrary length receive_message
 
 ## Make separate send/receive processes for client as well as server
 
@@ -10,7 +10,15 @@
 
 ## Build unique message IDs: local (per user) and global (for server)
 
+## Support contacts
+
+- Support contacts (with server being default contact for everyone)
+
 ## Support peer-to-peer messages
+
+- Need to also add support for storing online/offline users
+- Need to store messages for offline users
+- Need to support pushing all offline messages on user login
 
 ## Introduce command mode for client (e.g., :exit, :logout)
 
