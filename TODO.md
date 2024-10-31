@@ -1,6 +1,9 @@
 # Messaging TODOs
 
-## Build unique message IDs in format {sdr.rcpt.uuid}
+## Make separate processes for send/receive
+
+- Make 2 separate send/receive processes for frontend and for server backend
+- Need queues associated with each process
 
 ## Build login manager
 
@@ -8,17 +11,15 @@
 - Show online/offline symbol on client frontend
 - Needs to track user "last active" and auto-logout after ~15 mins of inactivity
 
-## Make separate send/receive processes for client as well as server
-
-- For server, might also need send and receive queues associated with each process
-
 ## Build conversation graph for all conversations
 
 - Design a conversation graph data structure for conversations
 - Support contacts (with server being default contact for everyone)
 - Server must store the full conversation graph, while client must only have their own node and all attached nodes
 - Contact addition/deletion must update both server and client graphs
-- Server must log all messages in this data structure
+- Build unique message IDs for each message in format {sdr.rcpt.uuid}
+- Server must log all messages in this data structure, while users log their own messages in their own sub-copies
+- This structure needs to be synced with files when server closing or when client exiting/logging off. Similarly needs to be loaded from file when server starting and when client logging in.
 
 ## Peer-to-peer chat in backend
 
