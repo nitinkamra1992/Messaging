@@ -5,11 +5,9 @@
 - Make 2 separate send/receive processes for frontend and for server backend
 - Need queues associated with each process
 
-## Build login manager
+## [Done] Build login manager
 
 - Need to support managing of online/offline users
-- Show online/offline symbol on client frontend
-- Needs to track user "last active" and auto-logout after ~15 mins of inactivity
 
 ## Build conversation graph for all conversations
 
@@ -32,6 +30,7 @@
 
 - Allow basic commands like :exit, :logout, :chat <username>, :adduser <username>, :deluser <username> etc.
 - Revise current client frontend to support peer-to-peer chat and add relevant commands
+- Show online/offline symbol on client frontend for all users
 
 ## Chat histories
 

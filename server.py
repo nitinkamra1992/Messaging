@@ -3,6 +3,7 @@ import asyncio
 
 from utils.llm import LLM
 from utils.userbase import Userbase
+from utils.connections import ConnectionManager
 from utils.constants import SERVER_NAME
 from utils.messaging import (
     receive_message,
@@ -21,6 +22,7 @@ class ChatServer:
         self.port = port
         self.llm = LLM()
         self.userbase = Userbase()
+        self.connection_manager = ConnectionManager()
 
     async def handle_client(self, reader, writer):
         # Get the client ID (peername) from the transport object
@@ -40,23 +42,33 @@ class ChatServer:
                 success = False
                 response_content = None
                 if type(msg) == RegisterRequest:
-                    success = self.userbase.add_new_user(msg.sender, msg.password)
-                    if success:
-                        response_content = (
-                            f"New username {msg.sender} registered and logged in."
-                        )
-                        username = msg.sender
-                    else:
+                    registered = self.userbase.add_new_user(msg.sender, msg.password)
+                    if not registered:
                         response_content = (
                             f"Username {msg.sender} is taken. Try another one."
                         )
-                elif type(msg) == LoginRequest:
-                    success = self.userbase.verify_login(msg.sender, msg.password)
-                    if success:
-                        response_content = f"Login successful."
-                        username = msg.sender
                     else:
+                        logged_in = self.connection_manager.login(msg.sender)
+                        if not logged_in:
+                            response_content = f"Can only log in from a single session. Username {msg.sender} is already logged in from a different session."
+                        else:
+                            response_content = (
+                                f"New username {msg.sender} registered and logged in."
+                            )
+                            username = msg.sender
+                            success = True
+                elif type(msg) == LoginRequest:
+                    verified = self.userbase.verify_login(msg.sender, msg.password)
+                    if not verified:
                         response_content = f"Incorrect username or password."
+                    else:
+                        logged_in = self.connection_manager.login(msg.sender)
+                        if not logged_in:
+                            response_content = f"Can only log in from a single session. Username {msg.sender} is already logged in from a different session."
+                        else:
+                            response_content = f"Login successful."
+                            username = msg.sender
+                            success = True
                 else:
                     success = False
                     response_content = f"Bad request."
@@ -73,11 +85,13 @@ class ChatServer:
                 print(response)
 
             except Exception as e:
+                if username:
+                    self.connection_manager.logout(username)
                 print(f"[{session_id}] logged out.")
                 return
 
         # Chat loop
-        while True:
+        while username:
             try:
                 # Read message
                 msg = await receive_message(reader)
@@ -93,9 +107,9 @@ class ChatServer:
                 await send_message(response, writer)
                 print(response)
             except Exception as e:
+                self.connection_manager.logout(username)
                 print(f"{username}[{session_id}] logged out.")
                 username = None
-                break
 
     async def start(self):
         server = await asyncio.start_server(self.handle_client, self.host, self.port)
