@@ -1,7 +1,7 @@
 import json
 import os
 
-from utils.messaging import SERVER_NAME
+from utils.constants import SERVER_NAME
 
 
 # Userbase
@@ -18,6 +18,9 @@ class Userbase:
             print(f"ERROR: {data_path} not found!")
             print(f"WARNING: Creating new userbase at {data_path}")
             self.user_data = {SERVER_NAME: ""}
+            os.makedirs(os.path.dirname(data_path), exist_ok=True)
+            with open(data_path, "w") as f:
+                json.dump(self.user_data, f, indent=2)
 
     def __post_init__(self):
         # Check to ensure server name exists as a user in the userbase

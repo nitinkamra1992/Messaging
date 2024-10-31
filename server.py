@@ -3,8 +3,8 @@ import asyncio
 
 from utils.llm import LLM
 from utils.userbase import Userbase
+from utils.constants import SERVER_NAME
 from utils.messaging import (
-    SERVER_NAME,
     receive_message,
     send_message,
     RegisterRequest,

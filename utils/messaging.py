@@ -1,18 +1,12 @@
 import datetime
 import pickle
 import struct
+
 from typing import Optional
+from utils.constants import SERVER_NAME, SERVER_DISPLAY_NAME, STATUS_CODES
 
 
-# Server constants
-SERVER_NAME = "__server__"
-SERVER_DISPLAY_NAME = "Server"
-
-
-# Status codes
-STATUS_CODES = {-1: "N/A", 0: "SUCCESS", 1: "FAILURE"}
-
-
+# Helpful transmission methods
 async def send_message(msg, writer):
     # Serialize the message
     msg = pickle.dumps(msg)

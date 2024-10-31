@@ -2,9 +2,8 @@ import argparse
 import asyncio
 import getpass
 
+from utils.constants import SERVER_NAME, SERVER_DISPLAY_NAME
 from utils.messaging import (
-    SERVER_NAME,
-    SERVER_DISPLAY_NAME,
     receive_message,
     send_message,
     RegisterRequest,
