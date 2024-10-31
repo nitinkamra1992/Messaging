@@ -8,7 +8,7 @@ from utils.messaging import SERVER_NAME
 class Userbase:
     """Userbase manager class"""
 
-    def __init__(self, data_path: str = "data/users.json"):
+    def __init__(self, data_path: str = f"data/{SERVER_NAME}/users.json"):
         self.data_path = data_path
 
         if os.path.exists(data_path):
