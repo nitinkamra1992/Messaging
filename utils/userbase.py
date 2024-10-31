@@ -44,3 +44,15 @@ class Userbase:
             json.dump(self.user_data, f, indent=2)
 
         return True
+
+    def del_user(self, username: str) -> bool:
+        if (username == SERVER_NAME) or (not self.exists_user(username)):
+            return False
+
+        del self.user_data[username]
+
+        # Write userbase to file
+        with open(self.data_path, "w") as f:
+            json.dump(self.user_data, f, indent=2)
+
+        return True
