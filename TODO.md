@@ -1,13 +1,6 @@
 # Messaging TODOs
 
-## Make separate processes for send/receive
-
-- Make 2 separate send/receive processes for frontend and for server backend
-- Need queues associated with each process
-
-## [Done] Build login manager
-
-- Need to support managing of online/offline users
+## Make 2 separate processes/tasks for send/receive for users
 
 ## Build conversation graph for all conversations
 
