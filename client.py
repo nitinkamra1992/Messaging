@@ -8,7 +8,7 @@ from utils.messaging import (
     send_message,
     RegisterRequest,
     LoginRequest,
-    UserServerMessage,
+    UserMessage,
 )
 
 
@@ -58,7 +58,7 @@ class ChatClient:
         # Chat loop
         while self.username is not None:
             content = input(f"{self.username}: ")
-            msg = UserServerMessage(self.username, SERVER_NAME, content)
+            msg = UserMessage(self.username, SERVER_NAME, content)
             try:
                 # Send message
                 await send_message(msg, self.writer)

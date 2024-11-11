@@ -10,8 +10,8 @@ from utils.messaging import (
     send_message,
     RegisterRequest,
     LoginRequest,
-    UserServerMessage,
-    ServerUserMessage,
+    UserMessage,
+    ServerMessage,
 )
 from utils.outgoing import OutgoingManager
 
@@ -93,7 +93,7 @@ class ChatServer:
                     response_content = f"Bad request."
 
                 # Respond back
-                response = ServerUserMessage(
+                response = ServerMessage(
                     SERVER_NAME,
                     username,
                     response_content,
@@ -117,13 +117,13 @@ class ChatServer:
             try:
                 # Read message
                 msg = await receive_message(reader)
-                assert type(msg) == UserServerMessage
+                assert type(msg) == UserMessage
                 assert msg.sender == username
                 print(msg)
 
                 # Respond back to client
                 response_content = await self.llm.query(msg.content)
-                response = ServerUserMessage(
+                response = ServerMessage(
                     SERVER_NAME, username, response_content, -1, session_id
                 )
                 await self.attempt_delivery(response, enqueue=True)

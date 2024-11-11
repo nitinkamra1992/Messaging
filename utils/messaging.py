@@ -72,20 +72,8 @@ class LoginRequest(Message):
         return super().__repr__() + ": Login Request."
 
 
-class UserServerMessage(Message):
-    """Message from user to server"""
-
-    def __init__(self, sender: str, recipient: str, content: str):
-        assert recipient == SERVER_NAME
-        super().__init__(sender, recipient)
-        self.content = content
-
-    def __repr__(self):
-        return super().__repr__() + f": {self.content}"
-
-
-class ServerUserMessage(Message):
-    """Message from server to user"""
+class ServerMessage(Message):
+    """Message from server"""
 
     def __init__(
         self,
@@ -110,3 +98,13 @@ class ServerUserMessage(Message):
             + super().__repr__()
             + f": {status_str}{self.content}"
         )
+
+
+class UserMessage(Message):
+    """Message from a user"""
+    def __init__(self, sender: str, recipient: str, content: str):
+        super().__init__(sender, recipient)
+        self.content = content
+
+    def __repr__(self):
+        return super().__repr__() + f": {self.content}"
