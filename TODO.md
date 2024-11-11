@@ -2,10 +2,12 @@
 
 ## Make 2 separate processes/tasks for send/receive for users
 
+- Make 2 separate processes/tasks for send/receive for users
+- Make corresponding front-end changes to show incoming messages from chats separately
+- Play a sound on incoming msg for client
+
 ## Build conversation graph for all conversations
 
-- [Done] Design a conversation graph data structure for conversations
-- [Done] Support contacts (with server being default contact for everyone)
 - Users can only message two-way contacts
 - Server must store the full conversation graph, while client must only have their own node and all attached nodes
 - Contact addition/deletion must update both server and client graphs
@@ -15,10 +17,10 @@
 
 ## Peer-to-peer chat in backend
 
-- Support peer-to-peer type messages in backend
-- Must support user-to-server message with AI responses and also user-self-messaging
-- Need to store messages for offline users
-- Need to support pushing all offline messages on user login
+- [Done] Support peer-to-peer type messages in backend
+- [Done] Must support user-to-server message with AI responses and also user-self-messaging
+- [Done] Need to store messages for offline users
+- [Done] Need to support pushing all offline messages on user login
 
 ## Introduce command mode for frontend
 

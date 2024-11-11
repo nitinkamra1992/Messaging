@@ -133,17 +133,20 @@ class ChatServer:
                     log_status = await self.chat_graph.log_msg(msg, check_valid=True)
 
                     # Respond back to client
-                    if log_status:
-                        response_content = await self.llm.query(msg.content)
-                    else:
-                        response_content = "Invalid user message"
-                    response = ServerMessage(
-                        SERVER_NAME, username, response_content, -1, session_id
-                    )
+                    response_content = await self.llm.query(msg.content) if log_status else "Invalid message"
+                    response_status = -1 if log_status else 1
+                    response = ServerMessage(SERVER_NAME, username, response_content, response_status, session_id)
                     await self.attempt_delivery(response, enqueue=True)
                 else:
-                    # TODO(nitin): Implement this
-                    raise NotImplementedError("Peer-to-peer messages are currently not implemented.")
+                    # Check msg validity
+                    if self.chat_graph.is_msg_valid(msg):
+                        # Attempt delivery to recipient
+                        await self.attempt_delivery(msg, enqueue=True)
+                    else:
+                        # Notify sender of invalid message
+                        response_content = f"Invalid message attempt to {msg.recipient}"
+                        response = ServerMessage(SERVER_NAME, username, response_content, 1, session_id)
+                        await self.attempt_delivery(response, enqueue=True)
             except Exception as e:
                 await self.connection_manager.logout(username)
                 print(f"{username}[{session_id}] logged out.")
