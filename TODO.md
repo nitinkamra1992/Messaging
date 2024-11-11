@@ -8,7 +8,7 @@
 
 ## Build conversation graph for all conversations
 
-- Users can only message two-way contacts
+- [Done] Users can only message two-way contacts
 - Server must store the full conversation graph, while client must only have their own node and all attached nodes
 - Contact addition/deletion must update both server and client graphs
 - Build unique message IDs for each message in format {sdr.rcpt.uuid}
@@ -24,7 +24,7 @@
 
 ## Introduce command mode for frontend
 
-- Allow basic commands like :exit, :login, :logout, :chat <username>, :adduser <username>, :deluser <username>, delchat <username> etc.
+- Allow basic commands like :help, :exit, :login, :logout, :chat <username>, :addfriend <username>, :delfriend <username>, delchat <username>, :back, :listfriends etc.
 - Revise current client frontend to support peer-to-peer chat and add relevant commands
 - Show online/offline symbol on client frontend for all users
 
