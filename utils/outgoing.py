@@ -3,9 +3,8 @@ import asyncio
 from utils.constants import SERVER_NAME
 
 
-# Outgoing messages manager for server
 class OutgoingManager:
-    """Outgoing manager class"""
+    """Outgoing messages manager class for server"""
 
     def __init__(self):
         self.lock = asyncio.Lock()

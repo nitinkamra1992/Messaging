@@ -2,7 +2,6 @@ import asyncio
 from utils.constants import SERVER_NAME
 
 
-# Connection manager
 class ConnectionManager:
     """Connection manager class"""
 
@@ -10,7 +9,7 @@ class ConnectionManager:
         self.lock = asyncio.Lock()
         self.online = {SERVER_NAME: (None, None)}
 
-    def __post_init__(self):
+        # Ensure server is online
         assert self.is_online(SERVER_NAME), f"{SERVER_NAME} must be online at launch time!"
 
     def is_online(self, username: str) -> bool:
