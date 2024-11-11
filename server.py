@@ -23,6 +23,27 @@ class ChatServer:
         self.llm = LLM()
         self.userbase = Userbase()
         self.connection_manager = ConnectionManager()
+        self.outgoing_queue = asyncio.Queue()
+
+    async def attempt_delivery_or_enqueue(self, msg):
+        writer = self.connection_manager.get_writer(msg.recipient)
+        success = False
+        if writer is not None:
+            try:
+                await send_message(msg, writer)
+                success = True
+                print(msg)
+            except Exception as e:
+                print(e)
+        if not success:
+            await self.outgoing_queue.put(msg)
+
+    async def outgoing_msg_handler(self):
+        while True:
+            msg = await self.outgoing_queue.get()
+            print(msg)  # DEBUG print
+            await self.attempt_delivery_or_enqueue(msg)
+            asyncio.sleep(0.01)
 
     async def handle_client(self, reader, writer):
         # Get the client ID (peername) from the transport object
@@ -48,7 +69,7 @@ class ChatServer:
                             f"Username {msg.sender} is taken. Try another one."
                         )
                     else:
-                        logged_in = self.connection_manager.login(msg.sender)
+                        logged_in = self.connection_manager.login(msg.sender, reader, writer)
                         if not logged_in:
                             response_content = f"Can only log in from a single session. Username {msg.sender} is already logged in from a different session."
                         else:
@@ -62,7 +83,7 @@ class ChatServer:
                     if not verified:
                         response_content = f"Incorrect username or password."
                     else:
-                        logged_in = self.connection_manager.login(msg.sender)
+                        logged_in = self.connection_manager.login(msg.sender, reader, writer)
                         if not logged_in:
                             response_content = f"Can only log in from a single session. Username {msg.sender} is already logged in from a different session."
                         else:
@@ -81,8 +102,7 @@ class ChatServer:
                     0 if success else 1,
                     session_id,
                 )
-                await send_message(response, writer)
-                print(response)
+                await self.attempt_delivery_or_enqueue(response)
 
             except Exception as e:
                 if username:
@@ -111,12 +131,19 @@ class ChatServer:
                 print(f"{username}[{session_id}] logged out.")
                 username = None
 
-    async def start(self):
-        server = await asyncio.start_server(self.handle_client, self.host, self.port)
+    async def start_client_service(self):
+        # Create client server
+        client_server = await asyncio.start_server(self.handle_client, self.host, self.port)
         print(f"Server started on port {self.port}")
-        async with server:
-            await server.serve_forever()
-        print(f"Server closed.")
+
+        # Start serving clients
+        async with client_server:
+            await client_server.serve_forever()
+
+    async def start(self):
+        client_service_task = asyncio.create_task(self.start_client_service())
+        outgoing_msgs_task = asyncio.create_task(self.outgoing_msg_handler())
+        await asyncio.gather(client_service_task, outgoing_msgs_task)
 
 
 if __name__ == "__main__":
