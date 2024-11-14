@@ -22,7 +22,7 @@ class ChatServer:
         self.host = host
         self.port = port
         self.llm = LLM()
-        self.chat_graph = ChatGraph()
+        self.chat_graph = ChatGraph(mainuser=SERVER_NAME, datapath=f"data/{SERVER_NAME}/cgraph.pkl")
         self.connection_manager = ConnectionManager()
         self.outgoing_manager = OutgoingManager()
 
@@ -62,7 +62,7 @@ class ChatServer:
                 success = False
                 response_content = None
                 if type(msg) == RegisterRequest:
-                    registered = await self.chat_graph.add_new_user(msg.sender, msg.password)
+                    registered = await self.chat_graph.add_user(msg.sender, msg.password)
                     if not registered:
                         response_content = (
                             f"Username {msg.sender} is taken. Try another one."
