@@ -1,5 +1,12 @@
 # Messaging TODOs
 
+## Add a urwid UI for frontend
+
+- Support login/register page
+- support main page with all chats
+- Support specific chat page
+- Support settings and other actions
+
 ## Make 2 separate processes/tasks for send/receive for users
 
 - Make 2 separate processes/tasks for send/receive for users
@@ -8,19 +15,11 @@
 
 ## Build conversation graph for all conversations
 
-- [Done] Users can only message two-way contacts
 - Server must store the full conversation graph, while client must only have their own node and all attached nodes
 - Contact addition/deletion must update both server and client graphs
 - Build unique message IDs for each message in format {sdr.rcpt.uuid}
 - Server must log all messages in this data structure, while users log their own messages in their own sub-copies
 - This structure needs to be synced with files when server closing or when client exiting/logging off. Similarly needs to be loaded from file when server starting and when client logging in.
-
-## Peer-to-peer chat in backend
-
-- [Done] Support peer-to-peer type messages in backend
-- [Done] Must support user-to-server message with AI responses and also user-self-messaging
-- [Done] Need to store messages for offline users
-- [Done] Need to support pushing all offline messages on user login
 
 ## Introduce command mode for frontend
 
@@ -34,8 +33,6 @@
 - Add chat history to AI response from server
 
 ## [P1] Add persistent login for frontend, until manually logged out
-
-## [P1] Add a flask UI for frontend
 
 ## [P1] Add convenient commands and tools
 
