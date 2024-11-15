@@ -2,14 +2,15 @@
 
 ## Add a urwid UI for frontend
 
-- Support login/register page
+- [Done] Support login/register page
 - support main page with all chats
 - Support specific chat page
-- Support settings and other actions
+- [Done] Support settings and other actions
+- Show online/offline symbol on client frontend for all friends
 
 ## Make 2 separate processes/tasks for send/receive for users
 
-- Make 2 separate processes/tasks for send/receive for users
+- [Done] Make 2 separate processes/tasks for send/receive for users
 - Make corresponding front-end changes to show incoming messages from chats separately
 - Play a sound on incoming msg for client
 
@@ -23,9 +24,9 @@
 
 ## Introduce command mode for frontend
 
-- Allow basic commands like :help, :exit, :login, :logout, :chat <username>, :addfriend <username>, :delfriend <username>, delchat <username>, :back, :listfriends etc.
+- [Done] Allow basic commands like :help, :settings, :set, :exit, :login, :register, :logout
+-Allow peer2peer commands: :deluser, :chat <username>, :addfriend <username>, :delfriend <username>, delchat <username>, :back, :listfriends etc.
 - Revise current client frontend to support peer-to-peer chat and add relevant commands
-- Show online/offline symbol on client frontend for all users
 
 ## Chat histories
 

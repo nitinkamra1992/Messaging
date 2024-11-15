@@ -15,4 +15,4 @@ pip install urwid
 ```python server.py```
 
 - Start the client UI:
-```python client.py -p 10000```
+```python client.py```

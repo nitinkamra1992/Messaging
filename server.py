@@ -4,7 +4,7 @@ import asyncio
 from utils.llm import LLM
 from utils.chat import ChatGraph
 from utils.connections import ConnectionManager
-from utils.constants import SERVER_NAME
+from utils.constants import SERVER_NAME, SERVER_DEFAULT_HOST, SERVER_DEFAULT_PORT
 from utils.messaging import (
     receive_message,
     send_message,
@@ -18,7 +18,7 @@ from utils.outgoing import OutgoingManager
 
 # Server class
 class ChatServer:
-    def __init__(self, host="localhost", port=10000):
+    def __init__(self, host=SERVER_DEFAULT_HOST, port=SERVER_DEFAULT_PORT):
         self.host = host
         self.port = port
         self.llm = LLM()
@@ -148,6 +148,7 @@ class ChatServer:
                         response = ServerMessage(SERVER_NAME, username, response_content, 1, session_id)
                         await self.attempt_delivery(response, enqueue=True)
             except Exception as e:
+                print(e)
                 await self.connection_manager.logout(username)
                 print(f"{username}[{session_id}] logged out.")
                 username = None
@@ -165,8 +166,8 @@ class ChatServer:
 if __name__ == "__main__":
     # Argument parsing
     parser = argparse.ArgumentParser()
-    parser.add_argument("--host", default="localhost")
-    parser.add_argument("-p", "--port", type=int, default=10000)
+    parser.add_argument("--host", default=SERVER_DEFAULT_HOST)
+    parser.add_argument("-p", "--port", type=int, default=SERVER_DEFAULT_PORT)
     args = parser.parse_args()
 
     # Create and start the server
