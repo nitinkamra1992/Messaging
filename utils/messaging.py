@@ -2,7 +2,7 @@ import datetime
 import pickle
 import struct
 
-from typing import Optional
+from typing import Any, Optional
 from utils.constants import SERVER_NAME, SERVER_DISPLAY_NAME, STATUS_CODES
 
 
@@ -82,12 +82,14 @@ class ServerMessage(Message):
         content: str,
         status: int,
         session: Optional[str] = None,
+        metadata: Optional[Any] = None,
     ):
         assert sender == SERVER_NAME
         super().__init__(sender, recipient)
         self.content = content
         self.status = status
         self.session = session
+        self.metadata = metadata
 
     def __repr__(self):
         status_str = (

@@ -61,6 +61,7 @@ class ChatServer:
                 # Attempt to authenticate user
                 success = False
                 response_content = None
+                metadata = None
                 if type(msg) == RegisterRequest:
                     registered = await self.chat_graph.add_user(msg.sender, msg.password)
                     if not registered:
@@ -77,6 +78,7 @@ class ChatServer:
                             )
                             username = msg.sender
                             success = True
+                            metadata = self.chat_graph.get_user_graph(username)
                 elif type(msg) == LoginRequest:
                     verified = self.chat_graph.verify_login(msg.sender, msg.password)
                     if not verified:
@@ -89,9 +91,11 @@ class ChatServer:
                             response_content = f"Login successful."
                             username = msg.sender
                             success = True
+                            metadata = self.chat_graph.get_user_graph(username)
                 else:
                     success = False
                     response_content = f"Bad request."
+                    metadata = None
 
                 # Respond back
                 response = ServerMessage(
@@ -100,6 +104,7 @@ class ChatServer:
                     response_content,
                     0 if success else 1,
                     session_id,
+                    metadata,
                 )
 
                 # Do not use attempt_delivery below since the user is not yet

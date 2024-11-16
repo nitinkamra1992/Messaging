@@ -6,6 +6,7 @@ import urwid
 
 from typing import Any, Tuple
 
+from utils.chat import ChatGraph
 from utils.constants import (
     APP_NAME,
     APP_VERSION,
@@ -49,6 +50,7 @@ class AppState:
     recipient: str = SERVER_NAME
     reader = None
     writer = None
+    chat_graph = None
 
 
 # AppAttributes class
@@ -175,12 +177,15 @@ class ChatClient:
             elif self.app_state.state in [AppStates.REG_USER, AppStates.LOGIN_USER]:
                 password = text
                 register = (self.app_state.state == AppStates.REG_USER)
-                success, response = await self.authenticate_user(self.app_state.username, password, register)
+                success, response, metadata = await self.authenticate_user(self.app_state.username, password, register)
                 self.display.set_text(f"{SERVER_DISPLAY_NAME}: {response}")
                 if success:
                     assert self.app_state.username is not None
                     assert self.app_state.reader is not None
                     assert self.app_state.writer is not None
+                    # Sync chat_graph with server version
+                    self.app_state.chat_graph = ChatGraph(self.app_state.username, f"data/{self.app_state.username}/cgraph.pkl")
+                    await self.app_state.chat_graph.load_cgraph(metadata)
                     self.app_state.state = AppStates.LOGIN
                 else:
                     self.app_state = AppState()  # Reset app_state
@@ -201,7 +206,7 @@ class ChatClient:
         # Redraw UI
         self.evl.call_soon(self.urwid_loop.draw_screen)
 
-    async def authenticate_user(self, username: str, password: str, register: bool = False) -> Tuple[bool, str]:
+    async def authenticate_user(self, username: str, password: str, register: bool = False) -> Tuple[bool, str, dict]:
         # Connect to server
         self.app_state.reader, self.app_state.writer = await asyncio.open_connection(self.app_attributes.host, self.app_attributes.port)
 
@@ -214,10 +219,11 @@ class ChatClient:
         response = await receive_message(self.app_state.reader)
         status = response.status
         content = response.content
+        metadata = response.metadata
         success = (status == 0)
 
         # Return response
-        return success, content
+        return success, content, metadata
 
     async def continuous_receiver(self):
         while True:

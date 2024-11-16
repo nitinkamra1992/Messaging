@@ -32,7 +32,6 @@ class ChatGraph:
             self.dump()
 
         # Run basic checks on graph
-        print("Running user-chat checks...")
         # Check mainuser exists in graph
         assert self.exists_user(self.mainuser), f"{self.mainuser} missing in the chat graph"
         # Check to ensure all users can talk to mainuser and vice-versa
@@ -45,7 +44,6 @@ class ChatGraph:
             for username in self.cgraph:
                 if username != self.mainuser:
                     assert len(self.cgraph[username]["chats"]) == 1
-        print("Finished running user-chat checks.")
 
     def dump(self):
         # Write cgraph to file
@@ -153,4 +151,32 @@ class ChatGraph:
                 self.cgraph[msg.sender]["chats"][msg.recipient].append(msg)
                 self.dump()
             return True
+        return False
+
+    def get_user_graph(self, username) -> dict:
+        # Only server can generate graphs for users
+        if (self.mainuser != SERVER_NAME) or (not self.exists_user(username)):
+            return None
+
+        user_cgraph = {}
+        user_cgraph[username] = {"chats": {}}
+
+        connections = self.cgraph[username]["chats"]
+        for connection, chats in connections.items():
+            user_cgraph[username]["chats"][connection] = chats
+            if username in self.cgraph[connection]["chats"]:
+                user_cgraph[connection] = {
+                    "chats": {
+                        username: self.cgraph[connection]["chats"][username]
+                    }
+                }
+        return user_cgraph
+
+    async def load_cgraph(self, cgraph: dict) -> bool:
+        # Only users can load external cgraphs
+        if self.mainuser != SERVER_NAME:
+            async with self.lock:
+                self.cgraph = cgraph
+                self.dump()
+                return True
         return False
