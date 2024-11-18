@@ -14,26 +14,46 @@ class ChatGraph:
         self.mainuser = mainuser
 
         # Load existing chat graph
-        if os.path.exists(datapath):
+        if (datapath is not None) and os.path.exists(datapath):
             with open(datapath, "rb") as f:
                 self.cgraph = pickle.load(f)
         # Or create a new one
         else:
-            print(f"ERROR: {datapath} not found!")
-            print(f"WARNING: Creating new chat graph at {datapath}")            
-            self.cgraph = {
-                self.mainuser: {
-                    "chats": {self.mainuser: []},
-                }
-            }
             if self.mainuser == SERVER_NAME:
-                self.cgraph[self.mainuser]["password"] = ""
-            os.makedirs(os.path.dirname(datapath), exist_ok=True)
-            self.dump()
+                print(f"ERROR: datapath {datapath} not found!")
+                print(f"WARNING: Creating new chat graph")
+                self.cgraph = {
+                    SERVER_NAME: {
+                        "password": "",
+                        "chats": {SERVER_NAME: []},
+                    }
+                }
+            else:
+                self.cgraph = {
+                    self.mainuser: {
+                        "chats": {
+                            SERVER_NAME: [],
+                            self.mainuser: [],
+                        },
+                    },
+                    SERVER_NAME: {
+                        "chats": {
+                            self.mainuser: []
+                        }
+                    }
+                }
+            if datapath:
+                os.makedirs(os.path.dirname(datapath), exist_ok=True)
+                self.dump()
 
-        # Run basic checks on graph
-        # Check mainuser exists in graph
+        # Run basic checks
+        self._run_checks()
+
+    def _run_checks(self):
+        """Run basic checks on cgraph"""
+        # Check mainuser exists in cgraph
         assert self.exists_user(self.mainuser), f"{self.mainuser} missing in the chat graph"
+        assert self.exists_user(SERVER_NAME), f"{SERVER_NAME} missing in the chat graph"
         # Check to ensure all users can talk to mainuser and vice-versa
         for username in self.cgraph:
             assert username in self.cgraph[self.mainuser]["chats"], f"{self.mainuser} has not added {username} as friend"
@@ -47,8 +67,9 @@ class ChatGraph:
 
     def dump(self):
         # Write cgraph to file
-        with open(self.datapath, "wb") as f:
-            pickle.dump(self.cgraph, f)
+        if self.datapath is not None:
+            with open(self.datapath, "wb") as f:
+                pickle.dump(self.cgraph, f)
 
     def exists_user(self, username: str) -> bool:
         return username in self.cgraph
@@ -72,7 +93,7 @@ class ChatGraph:
             if self.mainuser == SERVER_NAME:
                 self.cgraph[username] = {
                     "password": password,
-                    "chats": {SERVER_NAME: []}
+                    "chats": {SERVER_NAME: [], username: []}
                 }
                 self.cgraph[SERVER_NAME]["chats"][username] = []
             else:
@@ -158,13 +179,10 @@ class ChatGraph:
         if (self.mainuser != SERVER_NAME) or (not self.exists_user(username)):
             return None
 
-        user_cgraph = {}
-        user_cgraph[username] = {"chats": {}}
-
-        connections = self.cgraph[username]["chats"]
-        for connection, chats in connections.items():
+        user_cgraph = {username: {"chats": {}}}
+        for connection, chats in self.cgraph[username]["chats"].items():
             user_cgraph[username]["chats"][connection] = chats
-            if username in self.cgraph[connection]["chats"]:
+            if (connection != username) and (username in self.cgraph[connection]["chats"]):
                 user_cgraph[connection] = {
                     "chats": {
                         username: self.cgraph[connection]["chats"][username]
@@ -177,6 +195,7 @@ class ChatGraph:
         if self.mainuser != SERVER_NAME:
             async with self.lock:
                 self.cgraph = cgraph
+                self._run_checks()  # Run sanity checks
                 self.dump()
-                return True
+            return True
         return False

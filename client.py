@@ -103,7 +103,7 @@ class ChatClient:
         for func_name, func in self.commands.items():
             func_doc = inspect.getdoc(func)
             func_args = inspect.signature(func).parameters
-            func_help = f":{func_name} " + " ".join([a for a in func_args]) + f"\n{func_doc}"
+            func_help = f":{func_name} " + " ".join([f"<{a}>" for a in func_args]) + f"\n{func_doc}"
             func_helps.append(func_help)
         full_text = HELP_TEXT + "\n\nCOMMANDS:\n" + "\n".join(func_helps)
         return full_text
@@ -184,7 +184,7 @@ class ChatClient:
                     assert self.app_state.reader is not None
                     assert self.app_state.writer is not None
                     # Sync chat_graph with server version
-                    self.app_state.chat_graph = ChatGraph(self.app_state.username, f"data/{self.app_state.username}/cgraph.pkl")
+                    self.app_state.chat_graph = ChatGraph(self.app_state.username, datapath=None)
                     await self.app_state.chat_graph.load_cgraph(metadata)
                     self.app_state.state = AppStates.LOGIN
                 else:
