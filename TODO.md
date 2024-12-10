@@ -1,5 +1,7 @@
 # Messaging TODOs
 
+## Remove openai for server AI LLM
+
 ## Add a urwid UI for frontend
 
 - [Done] Support login/register page
