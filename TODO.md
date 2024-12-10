@@ -20,7 +20,7 @@
 
 - Server must store the full conversation graph, while client must only have their own node and all attached nodes
 - Contact addition/deletion must update both server and client graphs
-- Build unique message IDs for each message in format {sdr.rcpt.uuid}
+- Build unique message IDs for each message in format {sdr_rcpt_uuid}
 - Server must log all messages in this data structure, while users log their own messages in their own sub-copies
 - This structure needs to be synced with files when server closing or when client exiting/logging off. Similarly needs to be loaded from file when server starting and when client logging in.
 
